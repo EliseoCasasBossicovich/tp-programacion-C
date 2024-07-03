@@ -32,8 +32,10 @@ void mostrarListaPasajerosOrdenada(Pasajero pasajeros[], int totalPasajeros);
 int esNumero(char numero[]);
 int validarDni();
 int validarEdad();
+void validarDestino(Pasajero pasajeros[], int f, Destino destinos[]);
+char validarMedioPago();
+void calculaImporteTotal(Pasajero pasajeros[], int i, Destino destinos[]);
 // void ordenarPasajerosPorCodDestino(Pasajero pasajeros[], int totalPasajeros, int columna);
-// char validarMedioDePago();
 
 int main()
 {
@@ -145,13 +147,12 @@ void cargarPasajeros(Pasajero pasajeros[], int totalPasajeros, Destino destinos[
         scanf("%s", pasajeros[i].nombre);
         pasajeros[i].edad = validarEdad();
 
-        printf("Ingrese Codigo Destino:\nBRA- Brasil\nMDQ- Mar del Plata\nMZA- Mendoza\nBRC- Bariloche\n");
-        // strcpy(pasajeros[i].codigoDestino, validarDestino(pasajeros, i, destinos));
+        printf("Ingrese el numero del Destino:\n1- Brasil\n2- Mar del Plata\n3- Mendoza\n4- Bariloche\n");
+        validarDestino(pasajeros, i, destinos);
 
-        printf("¿Abonara con Tarjeta de Credito?\n S/N\n");
-        // pasajeros[i].pagaConTarjeta = validarMedioDePago();
-
-        // calculaImporteTotal(pasajeros, i, destinos);
+        printf("¿Abona con Tarjeta de Credito?\n S/N\n");
+        pasajeros[i].pagaConTarjeta = validarMedioPago();
+        calculaImporteTotal(pasajeros, i, destinos);
     }
 };
 
@@ -202,7 +203,7 @@ int esNumero(char numero[])
     {
         if (!isdigit(numero[i]))
         {
-            printf("Error: debe contener solo numeros, intente nuevamente ");
+            printf("Error: debe contener solo numeros, intente nuevamente.\n");
             return 0;
         }
     }
@@ -257,3 +258,131 @@ int validarDni()
     } while (!dniValid);
     return atoi(dni);
 };
+
+int validarEdad()
+{
+    char edad[3];
+    bool edadValid = false;
+
+    printf("Ingrese su edad:\n");
+    do
+    {
+        scanf("%s", edad);
+        if (esNumero(edad) == 1)
+        {
+            if (atoi(edad) > 0 && atoi(edad) < 120)
+            {
+                edadValid = true;
+            }
+            else
+            {
+                printf("Error: Ingrese una edad valida.\n");
+            }
+        }
+    } while (!edadValid);
+    return atoi(edad);
+};
+
+void validarDestino(Pasajero pasajeros[], int f, Destino destinos[])
+{
+    bool bandera = false;
+    int codigoDestino;
+
+    do
+    {
+        scanf("%d", &codigoDestino);
+
+        switch (codigoDestino)
+        {
+        case 1:
+            if (destinos[0].totalPasajeros < 60)
+            {
+                destinos[0].totalPasajeros++;
+                if (pasajeros[f].edad < 5)
+                {
+                    destinos[0].menores++;
+                }
+                strcpy(pasajeros[f].codigoDestino, "BRA");
+                bandera = true;
+            }
+            else
+            {
+                printf("Brasil Alcanzó su limite de cupo. Ingrese otro destino:\n");
+            }
+            break;
+        case 2:
+            if (destinos[1].totalPasajeros < 60)
+            {
+                destinos[1].totalPasajeros++;
+                if (pasajeros[f].edad < 5)
+                {
+                    destinos[1].menores++;
+                }
+                strcpy(pasajeros[f].codigoDestino, "MDQ");
+                bandera = true;
+            }
+            else
+            {
+                printf("Mar del Plata Alcanzó su limite de cupo. Ingrese otro destino:\n");
+            }
+            break;
+        case 3:
+            if (destinos[2].totalPasajeros < 60)
+            {
+                destinos[2].totalPasajeros++;
+                if (pasajeros[f].edad < 5)
+                {
+                    destinos[2].menores++;
+                }
+                strcpy(pasajeros[f].codigoDestino, "MZA");
+                bandera = true;
+            }
+            else
+            {
+                printf("Mendoza Alcanzó su limite de cupo. Ingrese otro destino:\n");
+            }
+            break;
+        case 4:
+            if (destinos[3].totalPasajeros < 60)
+            {
+                destinos[3].totalPasajeros++;
+                if (pasajeros[f].edad < 5)
+                {
+                    destinos[3].menores++;
+                }
+                strcpy(pasajeros[f].codigoDestino, "BRC");
+                bandera = true;
+            }
+            else
+            {
+                printf("Bariloche Alcanzó su limite de cupo. Ingrese otro destino:\n");
+            }
+            break;
+        default:
+            printf("Destino no válido.\n");
+            break;
+        }
+    } while (!bandera);
+};
+
+char validarMedioPago(){
+    char medioPago;
+    bool medioPagoValid = false;
+
+    do
+    {
+        scanf(" %c", &medioPago);
+        if (toupper(medioPago) == 'S' || toupper(medioPago) == 'N')
+        {
+            medioPagoValid = true;
+        }
+        else {
+            printf("Ingrese una respuesta valida:\n S (Si) / N (No)\n");
+        }
+    } while (!medioPagoValid);
+    return medioPago;
+};
+
+// void calculaImporteTotal() {
+
+// }
