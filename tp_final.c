@@ -35,7 +35,14 @@ int validarEdad();
 void validarDestino(Pasajero pasajeros[], int f, Destino destinos[]);
 char validarMedioPago();
 void calculaImporteTotal(Pasajero pasajeros[], int i, Destino destinos[]);
-// void ordenarPasajerosPorCodDestino(Pasajero pasajeros[], int totalPasajeros, int columna);
+void mostrarListaDeDestinos(Destino destinos[]);
+void ordenarPasajerosPorCodDestino(Pasajero pasajeros[], int totalPasajeros);
+void escribirDatos(Pasajero pasajeros[], int dniBuscar, int totalPasajeros);
+int busquedaSecuencial(Pasajero pasajeros[], int dniBuscar, int totalPasajeros);
+void mostrarMenuEstadistica(Pasajero pasajeros[], Destino destinos[], int totalPasajeros);
+void porcentajePorDestino(Destino destinos[], int totalPasajeros);
+void porcentajeMenoresPorDestino(Destino destinos[]);
+void mostrarDestinoMasSolicitado(Destino destinos[]);
 
 int main()
 {
@@ -75,21 +82,21 @@ int main()
             break;
         case 2:
             ordenarPasajeros(pasajeros, totalPasajeros);
-            // ordenarPasajerosPorCodDestino(pasajeros, totalPasajeros, 4);
+            ordenarPasajerosPorCodDestino(pasajeros, totalPasajeros);
             mostrarListaPasajerosOrdenada(pasajeros, totalPasajeros);
             break;
         case 3:
             printf("Lista de Destinos:\n");
-            // mostrarListaDeDestinos(destinos);
+            mostrarListaDeDestinos(destinos);
             break;
         case 4:
             printf("Buscar pasajero por DNI: \nIngrese DNI: \n");
             scanf("%d", &dniBuscar);
-            // escribirDatos(pasajeros, dniBuscar, totalPasajeros);
+            escribirDatos(pasajeros, dniBuscar, totalPasajeros);
             break;
         case 5:
             printf("Elija una opcion para la Estadistica:\n");
-            // mostrarMenuEstadistica(pasajeros, totalPasajeros, destinos);
+            mostrarMenuEstadistica(pasajeros, destinos, totalPasajeros);
             break;
         case 6:
             printf("Gracias por usar el sistema de Viaje Magico <3.\n");
@@ -192,6 +199,29 @@ void ordenarPasajeros(Pasajero pasajeros[], int totalPasajeros)
                     pasajeros[j] = aux;
                 }
             }
+        }
+    }
+};
+
+void ordenarPasajerosPorCodDestino(Pasajero pasajeros[], int totalPasajeros)
+{
+    Pasajero aux;
+    int posicionMenor;
+
+    if (totalPasajeros > 1)
+    {
+        for (int i = 0; i < totalPasajeros - 1; i++)
+        {
+            for (int j = i + 1; j < totalPasajeros; j++)
+            {
+                if (strcmp(pasajeros[i].codigoDestino, pasajeros[j].codigoDestino) > 0)
+                {
+                    posicionMenor = j;
+                }
+            }
+            aux = pasajeros[i];
+            pasajeros[i] = pasajeros[posicionMenor];
+            pasajeros[posicionMenor] = aux;
         }
     }
 };
@@ -365,7 +395,8 @@ void validarDestino(Pasajero pasajeros[], int f, Destino destinos[])
     } while (!bandera);
 };
 
-char validarMedioPago(){
+char validarMedioPago()
+{
     char medioPago;
     bool medioPagoValid = false;
 
@@ -376,13 +407,121 @@ char validarMedioPago(){
         {
             medioPagoValid = true;
         }
-        else {
+        else
+        {
             printf("Ingrese una respuesta valida:\n S (Si) / N (No)\n");
         }
     } while (!medioPagoValid);
-    return medioPago;
+    return toupper(medioPago);
 };
 
-// void calculaImporteTotal() {
+void calculaImporteTotal(Pasajero pasajeros[], int i, Destino destinos[])
+{
 
-// }
+    for (int j = 0; j < 4; j++)
+    {
+        if (strcmp(pasajeros[i].codigoDestino, destinos[j].codigo) == 0)
+        {
+            if (pasajeros[i].edad < 5)
+            {
+                pasajeros[i].importeTotal = 2000;
+            }
+            else
+            {
+                pasajeros[i].importeTotal = destinos[j].importe;
+            }
+            if (pasajeros[i].pagaConTarjeta == 'S')
+            {
+                pasajeros[i].importeTotal = pasajeros[i].importeTotal * 1.05;
+            }
+            destinos[j].totalImporte = destinos[j].totalImporte + pasajeros[i].importeTotal;
+        }
+    }
+};
+
+void mostrarListaDeDestinos(Destino destinos[])
+{
+    for (int i = 0; i < 4; i++)
+    {
+        printf("%s | %d | %.2f \n",
+               destinos[i].codigo, destinos[i].totalPasajeros, destinos[i].totalImporte);
+    }
+};
+
+void escribirDatos(Pasajero pasajeros[], int dniBuscar, int totalPasajeros)
+{
+    int pasajero = busquedaSecuencial(pasajeros, dniBuscar, totalPasajeros);
+
+    if (pasajero == -1)
+    {
+        printf("Pasajero no encontrado.\n");
+    }
+    else
+    {
+        printf("-Nombre: %s \n-Apellido %s \n-DNI: %d \n-Edad: %d \n-Codigo Destino:  %s \n-Pago con Tarjeta: %c \n-Total a pagar: %.2f\n",
+               pasajeros[pasajero].nombre,
+               pasajeros[pasajero].apellido,
+               pasajeros[pasajero].dni,
+               pasajeros[pasajero].edad,
+               pasajeros[pasajero].codigoDestino,
+               pasajeros[pasajero].pagaConTarjeta,
+               pasajeros[pasajero].importeTotal);
+    }
+};
+
+int busquedaSecuencial(Pasajero pasajeros[], int dniBuscar, int totalPasajeros)
+{
+    for (int i = 0; i < totalPasajeros; i++)
+    {
+        if (pasajeros[i].dni == dniBuscar)
+        {
+            return i;
+        }
+    }
+    return -1;
+};
+
+void mostrarMenuEstadistica(Pasajero pasajeros[], Destino destinos[], int totalPasajeros)
+{
+    int opcionEstadistica;
+
+    printf("1- Analizar estadísticas por cada destino porcentaje de pasajeros:\n");
+    printf("2- Analizar el destino más solicitado:\n");
+    printf("3- Analizar porcentaje de menores de 5 años de cada destino:\n");
+    scanf("%d", &opcionEstadistica);
+
+    switch (opcionEstadistica)
+    {
+    case 1:
+        porcentajePorDestino(destinos, totalPasajeros);
+        break;
+    case 2:
+        mostrarDestinoMasSolicitado(destinos);
+        break;
+    case 3:
+        porcentajeMenoresPorDestino(destinos);
+        break;
+
+    default:
+        printf("No encontrado.\n");
+        break;
+    }
+};
+
+void porcentajePorDestino(Destino destinos[], int totalPasajeros)
+{
+    float porcentaje;
+    printf("Porcentaje de pasajeros por destino\n");
+    for (int i = 0; i < 4; i++)
+    {
+        porcentaje = (destinos[i].totalPasajeros * 100) / totalPasajeros;
+        printf("El %.2f");
+    }
+    
+};
+void porcentajeMenoresPorDestino(Destino destinos[]) {
+
+};
+void mostrarDestinoMasSolicitado(Destino destinos[]) {
+
+};
