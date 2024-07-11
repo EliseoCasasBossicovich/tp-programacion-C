@@ -39,7 +39,7 @@ void mostrarListaDeDestinos(Destino destinos[]);
 void ordenarPasajerosPorCodDestino(Pasajero pasajeros[], int totalPasajeros);
 void escribirDatos(Pasajero pasajeros[], int dniBuscar, int totalPasajeros);
 int busquedaSecuencial(Pasajero pasajeros[], int dniBuscar, int totalPasajeros);
-void mostrarMenuEstadistica(Pasajero pasajeros[], Destino destinos[], int totalPasajeros);
+void mostrarMenuEstadistica(Destino destinos[], int totalPasajeros);
 void porcentajePorDestino(Destino destinos[], int totalPasajeros);
 void porcentajeMenoresPorDestino(Destino destinos[]);
 void mostrarDestinoMasSolicitado(Destino destinos[]);
@@ -86,23 +86,23 @@ int main()
             mostrarListaPasajerosOrdenada(pasajeros, totalPasajeros);
             break;
         case 3:
-            printf("Lista de Destinos:\n");
+            printf("\nLista de Destinos:\n");
             mostrarListaDeDestinos(destinos);
             break;
         case 4:
-            printf("Buscar pasajero por DNI: \nIngrese DNI: \n");
+            printf("\nBuscar pasajero por DNI: \nIngrese DNI: \n");
             scanf("%d", &dniBuscar);
             escribirDatos(pasajeros, dniBuscar, totalPasajeros);
             break;
         case 5:
-            printf("Elija una opcion para la Estadistica:\n");
-            mostrarMenuEstadistica(pasajeros, destinos, totalPasajeros);
+            printf("\nElija una opcion para la Estadistica:\n");
+            mostrarMenuEstadistica(destinos, totalPasajeros);
             break;
         case 6:
-            printf("Gracias por usar el sistema de Viaje Magico <3.\n");
+            printf("\nGracias por usar el sistema de Viaje Magico <3.\n");
             break;
         default:
-            printf("Opcion no valida, intente de nuevo.\n");
+            printf("\nOpcion no valida, intente de nuevo.\n");
             break;
         }
     } while (opcionMenu != 6);
@@ -165,7 +165,7 @@ void cargarPasajeros(Pasajero pasajeros[], int totalPasajeros, Destino destinos[
 
 void mostrarMenu()
 {
-    printf("\nIngrese una opcion: \n");
+    printf("\n\nIngrese una opcion: \n");
     printf("1. Mostrar lista de pasajeros ordenada por Apellido y Nombre\n");
     printf("2. Mostrar lista de pasajeros ordenada por Codigo de Destino y Apellido y Nombre\n");
     printf("3. Mostrar lista de Destinos\n");
@@ -481,13 +481,13 @@ int busquedaSecuencial(Pasajero pasajeros[], int dniBuscar, int totalPasajeros)
     return -1;
 };
 
-void mostrarMenuEstadistica(Pasajero pasajeros[], Destino destinos[], int totalPasajeros)
+void mostrarMenuEstadistica(Destino destinos[], int totalPasajeros)
 {
     int opcionEstadistica;
 
-    printf("1- Analizar estadísticas por cada destino porcentaje de pasajeros:\n");
-    printf("2- Analizar el destino más solicitado:\n");
-    printf("3- Analizar porcentaje de menores de 5 años de cada destino:\n");
+    printf("1- Analizar estadisticas por cada destino porcentaje de pasajeros.\n");
+    printf("2- Analizar el destino mas solicitado.\n");
+    printf("3- Analizar porcentaje de menores de 5 anios de cada destino.\n");
     scanf("%d", &opcionEstadistica);
 
     switch (opcionEstadistica)
@@ -515,13 +515,41 @@ void porcentajePorDestino(Destino destinos[], int totalPasajeros)
     for (int i = 0; i < 4; i++)
     {
         porcentaje = (destinos[i].totalPasajeros * 100) / totalPasajeros;
-        printf("El %.2f");
+        printf("Destino: %s - %.2f %%\n", destinos[i].codigo, porcentaje);
     }
-    
 };
-void porcentajeMenoresPorDestino(Destino destinos[]) {
-
+void porcentajeMenoresPorDestino(Destino destinos[])
+{
+    float porcentaje;
+    for (int i = 0; i < 4; i++)
+    {
+        if (destinos[i].totalPasajeros > 0)
+        {
+            porcentaje = (destinos[i].menores * 100) / destinos[i].totalPasajeros;
+            printf("Destino: %s - Porcentaje de pasajeros menores de 5 anios: %.2f %%\n", destinos[i].codigo, porcentaje);
+        }
+        else
+            printf("El destino %s no posee pasajeros.\n", destinos[i].codigo);
+    }
 };
-void mostrarDestinoMasSolicitado(Destino destinos[]) {
+void mostrarDestinoMasSolicitado(Destino destinos[])
+{
+    int maxPasajeros = 0;
+    char destinosEmpatados[20];
 
+    for (int i = 0; i < 4; i++)
+    {
+        if (destinos[i].totalPasajeros > maxPasajeros)
+        {
+            maxPasajeros = destinos[i].totalPasajeros;
+            strcpy(destinosEmpatados, destinos[i].codigo);
+        }
+        else if (destinos[i].totalPasajeros == maxPasajeros)
+        {
+            strcat(destinosEmpatados, ", ");
+            strcat(destinosEmpatados, destinos[i].codigo);
+        }
+    }
+    printf("El/Los destino(s) mas visitado(s) fue/fueron: %s\n", destinosEmpatados);
+    printf("Con un total de %d pasajeros", maxPasajeros);
 };
